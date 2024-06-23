@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: nearbysns
+
+  datasource:
+    url: jdbc:postgresql://foodnamdo.iptime.org:5432/neighbor_chat
+    username: ${db_username}
+    password: ${db_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging.level:
+  org:
+    hibernate:
+      SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE
