@@ -27,3 +27,8 @@ logging.level:
 
     springframework:
       security: TRACE
+
+server:
+  servlet:
+    session:
+      timeout: 30m
