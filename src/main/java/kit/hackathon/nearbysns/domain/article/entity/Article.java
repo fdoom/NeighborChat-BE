@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kit.hackathon.nearbysns.domain.account.entity.Account;
 import kit.hackathon.nearbysns.domain.article.policy.ArticleRetentionPolicy;
 import kit.hackathon.nearbysns.domain.article.policy.Expirable;
+import kit.hackathon.nearbysns.domain.comment.entity.Comment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.util.Assert;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -50,6 +53,9 @@ public class Article implements Expirable {
 
     @Column(name = "article_location")
     private Point articleLocation;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "article")
+    private List<Comment> comments = new ArrayList<>();
 
 
 
