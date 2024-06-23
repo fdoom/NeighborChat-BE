@@ -12,6 +12,4 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AccountLoginResponseDTO {
     private String sessionId;
-    private String accountLoginId;
-    private String accountRole;
 }
