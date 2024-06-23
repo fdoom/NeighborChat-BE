@@ -3,7 +3,7 @@ spring:
     name: nearbysns
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/neighbor_chat
+    url: jdbc:postgresql://foodnamdo.iptime.org:5432/neighbor_chat
     username: ${db_username}
     password: ${db_password}
     driver-class-name: org.postgresql.Driver
