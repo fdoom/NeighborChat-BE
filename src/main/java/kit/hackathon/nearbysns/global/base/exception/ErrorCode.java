@@ -10,6 +10,10 @@ public enum ErrorCode {
     // ARTICLE
     ARTICLE_NOT_FOUND(org.springframework.http.HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
 
+    // COMMENT
+    COMMENT_NOT_FOUND(org.springframework.http.HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다."),
+    COMMENT_ON_CHILD_COMMENT(org.springframework.http.HttpStatus.BAD_REQUEST, "대댓글에는 댓글을 달 수 없습니다."),
+
 
     // ACCOUNT
     REQUESTED_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "요청한 사용자가 존재하지 않습니다."),

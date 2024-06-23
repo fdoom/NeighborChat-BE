@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.Assert;
 
 import java.time.Instant;
@@ -23,6 +24,7 @@ import java.util.Objects;
 @Table(name = "article")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class Article implements Expirable {
 
     @Id
