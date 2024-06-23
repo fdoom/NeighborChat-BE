@@ -83,4 +83,27 @@ public class ArticleService {
         return ArticleResponse.of(article);
     }
 
+    @Transactional
+    public void deleteArticle(Long articleId, Long userId) {
+        Article article = articleRepository.findArticleById(articleId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
+        if (!article.getAccount().getAccountId().equals(userId)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+        article.setArticleDeletedAt(Instant.now());
+        Article saved = articleRepository.save(article);
+    }
+
+    @Transactional
+    public void updateArticle(Long articleId, Long userId, String content) {
+        Article article = articleRepository.findArticleById(articleId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
+        if (!article.getAccount().getAccountId().equals(userId)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+        article.setArticleContent(content);
+        Article saved = articleRepository.save(article);
+    }
+
+
 }

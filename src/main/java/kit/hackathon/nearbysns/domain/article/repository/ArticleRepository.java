@@ -2,6 +2,7 @@ package kit.hackathon.nearbysns.domain.article.repository;
 
 import kit.hackathon.nearbysns.domain.article.entity.Article;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
