@@ -5,14 +5,16 @@ import kit.hackathon.nearbysns.domain.account.entity.role.AccountRole;
 import kit.hackathon.nearbysns.global.base.entity.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+@ToString
 @Getter
 @NoArgsConstructor
 @Entity
 @AttributeOverrides({
-        @AttributeOverride(name = "createdAt", column = @Column(name = "account_created_at", nullable = false)),
+        @AttributeOverride(name = "createdAt", column = @Column(name = "account_created_at", nullable = false, updatable = false)),
         @AttributeOverride(name = "updatedAt", column = @Column(name = "account_last_password_updated_at", nullable = false))
 })
 public class Account extends BaseEntity {
