@@ -1,7 +1,7 @@
-package kit.hackathon.nearbysns.domain.account.controller;
+package kit.hackathon.nearbysns.global.config.security.util;
 
-import kit.hackathon.nearbysns.global.config.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-public class TestController {
+public class SecurityUtilTest {
     private final SecurityUtil securityUtil;
 
+    /**
+     * 클라이언트에서 세션 정보를 가지고 전달을 받는다는 가정 하에 작성된 코드
+     * @return
+     */
     @GetMapping("/hello")
     public String hello() {
         System.out.println("세션 정보에 대한 계정의 고유키: " + securityUtil.getAccountId());
