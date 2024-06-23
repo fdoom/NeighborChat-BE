@@ -24,3 +24,6 @@ logging.level:
         descriptor:
           sql:
             BasicBinder: TRACE
+
+    springframework:
+      security: TRACE

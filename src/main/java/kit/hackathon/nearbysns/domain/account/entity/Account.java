@@ -1,13 +1,21 @@
 package kit.hackathon.nearbysns.domain.account.entity;
 
 import jakarta.persistence.*;
+import kit.hackathon.nearbysns.domain.account.entity.role.AccountRole;
+import kit.hackathon.nearbysns.global.base.entity.BaseEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 @Entity
-public class Account {
+@AttributeOverrides({
+        @AttributeOverride(name = "createdAt", column = @Column(name = "account_created_at", nullable = false)),
+        @AttributeOverride(name = "updatedAt", column = @Column(name = "account_last_password_updated_at", nullable = false))
+})
+public class Account extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +31,8 @@ public class Account {
     private String accountLoginPw;
 
     @Column(name = "account_role", nullable = false)
-    private Short accountRole = 0;
-
-    @Column(name = "account_created_at", nullable = false)
-    private LocalDateTime accountCreatedAt = LocalDateTime.now();
-
-    @Column(name = "account_last_password_updated_at", nullable = false)
-    private LocalDateTime accountLastPasswordUpdatedAt = LocalDateTime.now();
+    @Enumerated(EnumType.ORDINAL)
+    private AccountRole accountRole = AccountRole.USER;
 
     @Column(name = "account_deleted_at")
     private LocalDateTime accountDeletedAt;
