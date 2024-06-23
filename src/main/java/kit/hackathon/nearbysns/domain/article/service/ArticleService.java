@@ -2,10 +2,12 @@ package kit.hackathon.nearbysns.domain.article.service;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import kit.hackathon.nearbysns.domain.account.entity.Account;
 import kit.hackathon.nearbysns.domain.account.repository.AccountRepository;
-import kit.hackathon.nearbysns.domain.article.dto.ArticleCreatedResponse;
+import kit.hackathon.nearbysns.domain.article.dto.ArticlePagedResponse;
+import kit.hackathon.nearbysns.domain.article.dto.ArticleResponse;
 import kit.hackathon.nearbysns.domain.article.entity.Article;
 import kit.hackathon.nearbysns.domain.article.policy.ArticleRetentionPolicy;
 import kit.hackathon.nearbysns.domain.article.repository.ArticleRepository;
@@ -16,11 +18,14 @@ import org.hibernate.validator.constraints.Range;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
+
+import java.time.Instant;
+import java.util.List;
 
 @Service
 @Validated
@@ -30,10 +35,8 @@ public class ArticleService {
     private final AccountRepository accountRepository;
     private final GeometryFactory geometryFactory;
 
-    //TODO 이거 맞나 확인
     @Transactional
-    @PreAuthorize("isFullyAuthenticated()")
-    public ArticleCreatedResponse postArticle(
+    public ArticleResponse postArticle(
             @NotNull(message = "userId must not be null") @Positive(message = "userId must be positive")
             Long userId,
             @NotBlank(message = "content must not be blank")
@@ -55,8 +58,29 @@ public class ArticleService {
         Article savedArticle = articleRepository.save(createdArticle);
 
         // RETURN RESPONSE
-        return ArticleCreatedResponse.of(savedArticle);
+        return ArticleResponse.of(savedArticle);
     }
 
+    public ArticlePagedResponse getArticles(
+            @NotNull(message = "latitude must not be null") @Range(min = -90, max = 90) // latitude range: -90 ~ 90
+            Double latitude,
+            @NotNull(message = "longitude must not be null") @Range(min = -180, max = 180) // longitude range: -180 ~ 180
+            Double longitude,
+            @NotNull(message = "meters must not be null") @Positive(message = "meters must be positive")
+            Double meters,
+            @NotNull(message = "after must not be null") @PastOrPresent(message = "after must be past or present")
+            Instant after,
+            @NotNull(message = "size must not be null") @Positive(message = "size must be positive")
+            Integer size) {
+        Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        List<Article> allPagedArticleNearby = articleRepository.findAllPagedArticleNearby(point, meters, after, size);
+        return ArticlePagedResponse.of(allPagedArticleNearby);
+    }
+
+    public ArticleResponse getArticle(Long articleId) {
+        Article article = articleRepository.findArticleById(articleId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
+        return ArticleResponse.of(article);
+    }
 
 }

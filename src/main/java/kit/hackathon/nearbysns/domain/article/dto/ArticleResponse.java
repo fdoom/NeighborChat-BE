@@ -4,7 +4,7 @@ import kit.hackathon.nearbysns.domain.article.entity.Article;
 
 import java.time.Instant;
 
-public record ArticleCreatedResponse(
+public record ArticleResponse(
         Long articleId,
         Long ownerId,
         String content,
@@ -14,8 +14,8 @@ public record ArticleCreatedResponse(
         Double latitude,
         Double longitude
 ) {
-    public static ArticleCreatedResponse of(Article article) {
-        return new ArticleCreatedResponse(
+    public static ArticleResponse of(Article article) {
+        return new ArticleResponse(
                 article.getArticleId(),
                 article.getAccount().getAccountId(),
                 article.getArticleContent(),
