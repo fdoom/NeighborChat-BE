@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     // ARTICLE
     ARTICLE_NOT_FOUND(org.springframework.http.HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
+    ARTICLE_EXPIRED(org.springframework.http.HttpStatus.BAD_REQUEST, "게시글이 만료되었습니다."),
 
     // COMMENT
     COMMENT_NOT_FOUND(org.springframework.http.HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다."),

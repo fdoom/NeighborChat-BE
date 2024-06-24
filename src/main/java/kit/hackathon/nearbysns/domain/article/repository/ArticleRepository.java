@@ -40,4 +40,6 @@ public interface ArticleRepository extends Repository<Article,Long> {
             and a.articleExpiredAt > current_timestamp
             """)
     Optional<Article> findArticleById(@Param("articleId") Long articleId);
+
+    Optional<Article> findByArticleId(Long articleId);
 }
