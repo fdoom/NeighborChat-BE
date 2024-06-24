@@ -42,4 +42,8 @@ public class Account extends BaseEntity {
     public void deleteNow() {
         accountDeletedAt = LocalDateTime.now();
     }
+
+    public void updateName(String accountName) {
+        this.accountName = accountName;
+    }
 }

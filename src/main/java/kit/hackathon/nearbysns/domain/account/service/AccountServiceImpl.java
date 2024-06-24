@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpSession;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountDeleteRequestDTO;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountLoginRequestDTO;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountRegisterRequestDTO;
+import kit.hackathon.nearbysns.domain.account.dto.request.AccountUpdateNameRequestDTO;
+import kit.hackathon.nearbysns.domain.account.dto.response.AccountUpdatedNameResponseDTO;
 import kit.hackathon.nearbysns.domain.account.entity.Account;
 import kit.hackathon.nearbysns.domain.account.repository.AccountRepository;
 import kit.hackathon.nearbysns.global.base.exception.CustomException;
@@ -11,6 +13,7 @@ import kit.hackathon.nearbysns.global.base.exception.ErrorCode;
 import kit.hackathon.nearbysns.global.config.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -49,14 +52,7 @@ public class AccountServiceImpl implements AccountService {
     public void authenticate(AccountLoginRequestDTO accountLoginRequestDTO) {
         Account account = accountRepository.findByAccountLoginId(accountLoginRequestDTO.getAccountLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        if(account.getAccountDeletedAt() != null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
-        if (!passwordEncoder.matches(accountLoginRequestDTO.getAccountLoginPw(), account.getAccountLoginPw())) {
-            throw new CustomException(ErrorCode.PASSWORD_INVALID);
-        }
+        basicAccountCheck(account, accountLoginRequestDTO.getAccountLoginPw());
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(accountLoginRequestDTO.getAccountLoginId(), accountLoginRequestDTO.getAccountLoginPw());
@@ -71,7 +67,29 @@ public class AccountServiceImpl implements AccountService {
     public void delete(AccountDeleteRequestDTO accountDeleteRequestDTO) {
         Account account = accountRepository.findById(securityUtil.getAccountId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        basicAccountCheck(account, accountDeleteRequestDTO.getAccountLoginPw());
         account.deleteNow();
         accountRepository.save(account);
+    }
+
+    @Override
+    public ResponseEntity<AccountUpdatedNameResponseDTO> updateName(AccountUpdateNameRequestDTO accountUpdateNameRequestDTO) {
+        Account account = accountRepository.findById(securityUtil.getAccountId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        basicAccountCheck(account, accountUpdateNameRequestDTO.getAccountLoginPw());
+
+        account.updateName(accountUpdateNameRequestDTO.getAccountName());
+        accountRepository.save(account);
+        return ResponseEntity.ok(modelMapper.map(account, AccountUpdatedNameResponseDTO.class));
+    }
+
+    private void basicAccountCheck(Account account, String inputPassword) {
+        if(account.getAccountDeletedAt() != null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        if (!passwordEncoder.matches(inputPassword, account.getAccountLoginPw())) {
+            throw new CustomException(ErrorCode.PASSWORD_INVALID);
+        }
     }
 }
