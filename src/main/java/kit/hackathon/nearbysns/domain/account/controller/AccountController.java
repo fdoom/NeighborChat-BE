@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountDeleteRequestDTO;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountLoginRequestDTO;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountRegisterRequestDTO;
+import kit.hackathon.nearbysns.domain.account.dto.request.AccountUpdateNameRequestDTO;
+import kit.hackathon.nearbysns.domain.account.dto.response.AccountUpdatedNameResponseDTO;
 import kit.hackathon.nearbysns.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,5 +38,10 @@ public class AccountController {
         accountService.delete(accountDeleteRequestDTO);
         URI redirectUri = URI.create("/account/logout");
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+    }
+
+    @PatchMapping("/update/accountName")
+    public ResponseEntity<AccountUpdatedNameResponseDTO> updateAccountName(@Valid @RequestBody AccountUpdateNameRequestDTO accountUpdateNameRequestDTO) {
+        return accountService.updateName(accountUpdateNameRequestDTO);
     }
 }
