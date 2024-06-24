@@ -38,7 +38,8 @@ public class AccountController {
     @PostMapping("/register")
     @Operation(summary = "사용자 계정 회원 가입",
     description = "요청 = 사용자 계정 이름: accountName, 사용자 계정 아이디: accountLoginId, 사용자 계정 비밀번호: accountLoginPw")
-    @ApiResponse(responseCode = "409", description = "사용자 계정 아이디가 이미 존재하여 중복되었습니다.")
+    @ApiResponse(responseCode = "409", description = "사용자 계정 아이디가 이미 존재하여 중복되었습니다.",
+    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<Void> register(@Valid @RequestBody AccountRegisterRequestDTO accountRegisterRequestDTO) {
         accountService.register(accountRegisterRequestDTO);
         return ResponseEntity.ok().build();
