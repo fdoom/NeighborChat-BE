@@ -2,10 +2,7 @@ package kit.hackathon.nearbysns.domain.account.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountDeleteRequestDTO;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountLoginRequestDTO;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountRegisterRequestDTO;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountUpdateNameRequestDTO;
+import kit.hackathon.nearbysns.domain.account.dto.request.*;
 import kit.hackathon.nearbysns.domain.account.dto.response.AccountUpdatedNameResponseDTO;
 import kit.hackathon.nearbysns.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +40,12 @@ public class AccountController {
     @PatchMapping("/update/accountName")
     public ResponseEntity<AccountUpdatedNameResponseDTO> updateAccountName(@Valid @RequestBody AccountUpdateNameRequestDTO accountUpdateNameRequestDTO) {
         return accountService.updateName(accountUpdateNameRequestDTO);
+    }
+
+    @PatchMapping("/update/accountLoginPw")
+    public ResponseEntity<Void> updateAccountLoginPw(@Valid @RequestBody AccountUpdateLoginPasswordRequestDTO accountUpdateLoginPasswordRequestDTO) {
+        accountService.updatePassword(accountUpdateLoginPasswordRequestDTO);
+        URI redirectUri = URI.create("/account/logout");
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
     }
 }

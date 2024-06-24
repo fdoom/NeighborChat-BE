@@ -46,4 +46,8 @@ public class Account extends BaseEntity {
     public void updateName(String accountName) {
         this.accountName = accountName;
     }
+
+    public void updatePassword(String accountLoginPw) {
+        this.accountLoginPw = accountLoginPw;
+    }
 }

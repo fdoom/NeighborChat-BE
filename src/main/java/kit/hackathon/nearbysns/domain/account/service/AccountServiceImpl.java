@@ -1,10 +1,7 @@
 package kit.hackathon.nearbysns.domain.account.service;
 
 import jakarta.servlet.http.HttpSession;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountDeleteRequestDTO;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountLoginRequestDTO;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountRegisterRequestDTO;
-import kit.hackathon.nearbysns.domain.account.dto.request.AccountUpdateNameRequestDTO;
+import kit.hackathon.nearbysns.domain.account.dto.request.*;
 import kit.hackathon.nearbysns.domain.account.dto.response.AccountUpdatedNameResponseDTO;
 import kit.hackathon.nearbysns.domain.account.entity.Account;
 import kit.hackathon.nearbysns.domain.account.repository.AccountRepository;
@@ -81,6 +78,16 @@ public class AccountServiceImpl implements AccountService {
         account.updateName(accountUpdateNameRequestDTO.getAccountName());
         accountRepository.save(account);
         return ResponseEntity.ok(modelMapper.map(account, AccountUpdatedNameResponseDTO.class));
+    }
+
+    @Override
+    public void updatePassword(AccountUpdateLoginPasswordRequestDTO accountUpdateLoginPasswordRequestDTO) {
+        Account account = accountRepository.findById(securityUtil.getAccountId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        basicAccountCheck(account, accountUpdateLoginPasswordRequestDTO.getCurrentPw());
+
+        account.updatePassword(passwordEncoder.encode(accountUpdateLoginPasswordRequestDTO.getNewPw()));
+        accountRepository.save(account);
     }
 
     private void basicAccountCheck(Account account, String inputPassword) {
