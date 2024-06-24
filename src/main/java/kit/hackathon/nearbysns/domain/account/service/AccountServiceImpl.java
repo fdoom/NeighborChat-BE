@@ -1,12 +1,14 @@
 package kit.hackathon.nearbysns.domain.account.service;
 
 import jakarta.servlet.http.HttpSession;
+import kit.hackathon.nearbysns.domain.account.dto.request.AccountDeleteRequestDTO;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountLoginRequestDTO;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountRegisterRequestDTO;
 import kit.hackathon.nearbysns.domain.account.entity.Account;
 import kit.hackathon.nearbysns.domain.account.repository.AccountRepository;
 import kit.hackathon.nearbysns.global.base.exception.CustomException;
 import kit.hackathon.nearbysns.global.base.exception.ErrorCode;
+import kit.hackathon.nearbysns.global.config.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -27,6 +32,7 @@ public class AccountServiceImpl implements AccountService {
     private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
     private final HttpSession httpSession;
+    private final SecurityUtil securityUtil;
 
     @Override
     public void register(AccountRegisterRequestDTO accountRegisterRequestDTO) {
@@ -44,6 +50,10 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByAccountLoginId(accountLoginRequestDTO.getAccountLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        if(account.getAccountDeletedAt() != null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         if (!passwordEncoder.matches(accountLoginRequestDTO.getAccountLoginPw(), account.getAccountLoginPw())) {
             throw new CustomException(ErrorCode.PASSWORD_INVALID);
         }
@@ -55,5 +65,13 @@ public class AccountServiceImpl implements AccountService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         httpSession.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+    }
+
+    @Override
+    public void delete(AccountDeleteRequestDTO accountDeleteRequestDTO) {
+        Account account = accountRepository.findById(securityUtil.getAccountId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        account.deleteNow();
+        accountRepository.save(account);
     }
 }
