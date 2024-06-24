@@ -3,7 +3,6 @@ package kit.hackathon.nearbysns.domain.account.service;
 import jakarta.servlet.http.HttpSession;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountLoginRequestDTO;
 import kit.hackathon.nearbysns.domain.account.dto.request.AccountRegisterRequestDTO;
-import kit.hackathon.nearbysns.domain.account.dto.response.AccountLoginResponseDTO;
 import kit.hackathon.nearbysns.domain.account.entity.Account;
 import kit.hackathon.nearbysns.domain.account.repository.AccountRepository;
 import kit.hackathon.nearbysns.global.base.exception.CustomException;
@@ -41,7 +40,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountLoginResponseDTO authenticate(AccountLoginRequestDTO accountLoginRequestDTO) {
+    public void authenticate(AccountLoginRequestDTO accountLoginRequestDTO) {
         Account account = accountRepository.findByAccountLoginId(accountLoginRequestDTO.getAccountLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -56,8 +55,5 @@ public class AccountServiceImpl implements AccountService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         httpSession.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-        return AccountLoginResponseDTO.builder()
-                .sessionId(httpSession.getId())
-                .build();
     }
 }
