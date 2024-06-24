@@ -26,7 +26,7 @@ logging.level:
             BasicBinder: TRACE
 
     springframework:
-      security: TRACE
+      security: DEBUG
 
 server:
   servlet:

@@ -40,7 +40,10 @@ public class SecurityConfig {
                     sessionManagementConfigurer
                             .sessionFixation().changeSessionId()
                             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-                });
+                })
+                .logout(logout -> logout
+                        .logoutUrl("/account/logout")
+                        .invalidateHttpSession(true));
         return http.build();
     }
 
