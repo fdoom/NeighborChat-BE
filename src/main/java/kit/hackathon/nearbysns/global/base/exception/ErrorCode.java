@@ -19,7 +19,7 @@ public enum ErrorCode {
     // ACCOUNT
     REQUESTED_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "요청한 사용자가 존재하지 않습니다."),
 
-    DUPLICATED_USERNAME(org.springframework.http.HttpStatus.CONFLICT, "Username이 중복되었습니다."),
+    DUPLICATED_USERNAME(org.springframework.http.HttpStatus.CONFLICT, "사용자의 아이디가 중복되었습니다."),
     USER_NOT_FOUND(org.springframework.http.HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다."),
     PASSWORD_INVALID(org.springframework.http.HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
 
