@@ -38,4 +38,8 @@ public class Account extends BaseEntity {
 
     @Column(name = "account_deleted_at")
     private LocalDateTime accountDeletedAt;
+
+    public void deleteNow() {
+        accountDeletedAt = LocalDateTime.now();
+    }
 }
