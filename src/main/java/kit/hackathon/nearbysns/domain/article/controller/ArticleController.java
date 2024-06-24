@@ -6,6 +6,7 @@ import kit.hackathon.nearbysns.domain.article.dto.ArticlePutRequest;
 import kit.hackathon.nearbysns.domain.article.dto.ArticleResponse;
 import kit.hackathon.nearbysns.domain.article.entity.Article;
 import kit.hackathon.nearbysns.domain.article.service.ArticleService;
+import kit.hackathon.nearbysns.global.config.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,13 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
+    private final SecurityUtil securityUtil;
 
     @PostMapping("/articles")
     public ResponseEntity<ArticleResponse> createArticle(
             @RequestBody(required = true) ArticleCreateRequest request
     ) {
-        //TODO : 추후 인증 완성되면 변경
-        Long userId = 1L;
+        Long userId = securityUtil.getAccountId();
         ArticleResponse articleResponse = articleService.postArticle(
                 userId,
                 request.content(),
@@ -65,8 +66,7 @@ public class ArticleController {
     public ResponseEntity<Void> deleteArticle(
             @PathVariable(name = "articleId") Long articleId
     ) {
-        //TODO : 추후 인증 완성되면 변경
-        Long userId = 1L;
+        Long userId = securityUtil.getAccountId();
         articleService.deleteArticle(articleId, userId);
         return ResponseEntity.noContent().build();
     }
@@ -76,8 +76,7 @@ public class ArticleController {
             @PathVariable(name = "articleId") Long articleId,
             @RequestBody(required = true) ArticlePutRequest request
             ) {
-        //TODO : 추후 인증 완성되면 변경
-        Long userId = 1L;
+        Long userId = securityUtil.getAccountId();
         articleService.updateArticle(
                 articleId,
                 userId,

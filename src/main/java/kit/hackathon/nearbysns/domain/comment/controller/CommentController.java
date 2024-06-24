@@ -4,6 +4,7 @@ import kit.hackathon.nearbysns.domain.comment.dto.CommentPostRequest;
 import kit.hackathon.nearbysns.domain.comment.dto.CommentPutRequest;
 import kit.hackathon.nearbysns.domain.comment.dto.CommentResponse;
 import kit.hackathon.nearbysns.domain.comment.service.CommentService;
+import kit.hackathon.nearbysns.global.config.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
+    private final SecurityUtil securityUtil;
 
     // 1단계 댓글 조회
     @GetMapping("/articles/{articleId}/comments")
@@ -42,8 +44,7 @@ public class CommentController {
             @PathVariable Long articleId,
             @RequestBody CommentPostRequest commentPostRequest
     ) {
-        // TODO: 로그인한 사용자의 ID를 가져와서 authorId에 넣어주어야 함
-        Long authorId = 1L;
+        Long authorId = securityUtil.getAccountId();
         CommentResponse commentResponse = commentService.postComment(
                 articleId,
                 authorId,
@@ -56,8 +57,7 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId
     ) {
-        // TODO: 로그인한 사용자의 ID를 가져와서 authorId에 넣어주어야 함
-        Long authorId = 1L;
+        Long authorId = securityUtil.getAccountId();
         commentService.deleteComment(commentId, authorId);
         return ResponseEntity.noContent().build();
     }
@@ -67,8 +67,7 @@ public class CommentController {
             @PathVariable Long commentId,
             @RequestBody CommentPutRequest commentPutRequest
     ) {
-        // TODO: 로그인한 사용자의 ID를 가져와서 authorId에 넣어주어야 함
-        Long authorId = 1L;
+        Long authorId = securityUtil.getAccountId();
         CommentResponse commentResponse = commentService.updateComment(commentId, authorId, commentPutRequest.commentContent());
         return ResponseEntity.ok(commentResponse);
     }
