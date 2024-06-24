@@ -53,22 +53,24 @@ public class CommentController {
         return ResponseEntity.ok(commentResponse);
     }
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("/articles/{articleId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(
+            @PathVariable Long articleId,
             @PathVariable Long commentId
     ) {
         Long authorId = securityUtil.getAccountId();
-        commentService.deleteComment(commentId, authorId);
+        commentService.deleteComment(articleId, commentId, authorId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/comments/{commentId}")
+    @PutMapping("/articles/{articleId}/comments/{commentId}")
     public ResponseEntity<CommentResponse> updateComment(
+            @PathVariable Long articleId,
             @PathVariable Long commentId,
             @RequestBody CommentPutRequest commentPutRequest
     ) {
         Long authorId = securityUtil.getAccountId();
-        CommentResponse commentResponse = commentService.updateComment(commentId, authorId, commentPutRequest.commentContent());
+        CommentResponse commentResponse = commentService.updateComment(articleId, commentId, authorId, commentPutRequest.commentContent());
         return ResponseEntity.ok(commentResponse);
     }
 

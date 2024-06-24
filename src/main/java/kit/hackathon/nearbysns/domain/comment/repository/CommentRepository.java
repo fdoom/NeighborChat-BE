@@ -28,12 +28,13 @@ public interface CommentRepository extends Repository<Comment, Long> {
             FROM Comment c
             LEFT JOIN FETCH c.childComments
             WHERE c.parentComment.id = :parentCommentId
+            AND c.article.articleId = :articleId
             AND c.deletedAt IS NULL
             ORDER BY c.createdAt DESC
             """)
-    Page<Comment> findChildCommentsByParentComment(Long parentCommentId, Pageable pageable);
+    Page<Comment> findChildCommentsByParentComment(Long articleId, Long parentCommentId, Pageable pageable);
 
-    Optional<Comment> findByIdAndDeletedAtIsNull(Long id);
+    Optional<Comment> findByIdAndArticle_ArticleIdAndDeletedAtIsNull(Long id, Long articleId);
 
     Comment save(Comment comment);
 

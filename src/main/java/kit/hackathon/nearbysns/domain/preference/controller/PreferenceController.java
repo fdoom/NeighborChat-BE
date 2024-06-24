@@ -7,6 +7,7 @@ import kit.hackathon.nearbysns.domain.preference.service.PreferenceService;
 import kit.hackathon.nearbysns.global.config.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +27,10 @@ public class PreferenceController {
 
     @GetMapping("/articles/{articleId}/preference/detail")
     public ResponseEntity<Page<PreferenceDetailResponse>> getArticlePreferenceDetail(
-            @PathVariable Long articleId
+            @PathVariable Long articleId,
+            Pageable pageable
     ) {
-        Page<PreferenceDetailResponse> articlePreferenceDetail = preferenceService.getArticlePreferenceDetail(articleId);
+        Page<PreferenceDetailResponse> articlePreferenceDetail = preferenceService.getArticlePreferenceDetail(articleId, pageable);
         return ResponseEntity.ok(articlePreferenceDetail);
     }
 

@@ -13,13 +13,12 @@ import kit.hackathon.nearbysns.domain.article.policy.ArticleRetentionPolicy;
 import kit.hackathon.nearbysns.domain.article.repository.ArticleRepository;
 import kit.hackathon.nearbysns.global.base.exception.CustomException;
 import kit.hackathon.nearbysns.global.base.exception.ErrorCode;
+import kit.hackathon.nearbysns.global.validator.NonExpiredArticleId;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -77,14 +76,20 @@ public class ArticleService {
         return ArticlePagedResponse.of(allPagedArticleNearby);
     }
 
-    public ArticleResponse getArticle(Long articleId) {
+    public ArticleResponse getArticle(
+            @NonExpiredArticleId(message = "article not found or expired")
+            Long articleId) {
         Article article = articleRepository.findArticleById(articleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
         return ArticleResponse.of(article);
     }
 
     @Transactional
-    public void deleteArticle(Long articleId, Long userId) {
+    public void deleteArticle(
+            @NonExpiredArticleId(message = "article not found or expired")
+            Long articleId,
+            @NotNull(message = "userId must not be null") @Positive(message = "userId must be positive")
+            Long userId) {
         Article article = articleRepository.findArticleById(articleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
         if (!article.getAccount().getAccountId().equals(userId)) {
@@ -95,7 +100,13 @@ public class ArticleService {
     }
 
     @Transactional
-    public void updateArticle(Long articleId, Long userId, String content) {
+    public void updateArticle(
+            @NonExpiredArticleId(message = "article not found or expired")
+            Long articleId,
+            @NotNull(message = "userId must not be null") @Positive(message = "userId must be positive")
+            Long userId,
+            @NotBlank(message = "content must not be blank")
+            String content) {
         Article article = articleRepository.findArticleById(articleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
         if (!article.getAccount().getAccountId().equals(userId)) {
