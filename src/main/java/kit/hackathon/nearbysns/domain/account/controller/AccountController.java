@@ -37,18 +37,28 @@ public class AccountController {
 
     @PostMapping("/register")
     @Operation(summary = "사용자 계정 회원 가입",
-    description = "요청 = 사용자 계정 이름: accountName, 사용자 계정 아이디: accountLoginId, 사용자 계정 비밀번호: accountLoginPw")
+    description = "사용자 계정에 대한 이름, 아이디, 비밀번호를 입력하여 회원가입")
     @ApiResponse(responseCode = "409", description = "사용자 계정 아이디가 이미 존재하여 중복되었습니다.",
     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    public ResponseEntity<Void> register(@Valid @RequestBody AccountRegisterRequestDTO accountRegisterRequestDTO) {
+    public ResponseEntity<Void> register(
+            @Valid
+            @RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+            description = "사용자 계정 이름: accountName, 사용자 계정 아이디: accountLoginId, 사용자 계정 비밀번호: accountLoginPw")
+            AccountRegisterRequestDTO accountRegisterRequestDTO) {
         accountService.register(accountRegisterRequestDTO);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
     @Operation(summary = "사용자 계정 로그인",
-    description = "요청 = 사용자 계정 아이디: accountLoginId, 사용자 계정 비밀번호: accountLoginPw")
-    public ResponseEntity<Void> login(@Valid @RequestBody AccountLoginRequestDTO accountLoginRequestDTO, HttpSession session) {
+    description = "사용자 계정의 로그인 아이디와 비밀번호 입력하여 세션 정보 받기")
+    public ResponseEntity<Void> login(
+            @Valid
+            @RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+            description = "요청 = 사용자 계정 아이디: accountLoginId, 사용자 계정 비밀번호: accountLoginPw")
+            AccountLoginRequestDTO accountLoginRequestDTO) {
         accountService.authenticate(accountLoginRequestDTO);
         return ResponseEntity.ok().build();
     }
@@ -56,11 +66,15 @@ public class AccountController {
     @DeleteMapping("/delete")
     @Operation(summary = "사용자 계정 삭제",
     description = """
-            요청 = 사용자 계정 비밀번호: accountLoginPw \n
             삭제 방식은 소프트 삭제 방식(실질적으로 DB에서 삭제하지 않고 삭제한 계정으로 취급) \n
             삭제 작업 이후 리디렉션을 통해 로그아웃하여 세션 정보 제거 (재로그인 필요)
             """)
-    public ResponseEntity<Void> delete(@Valid @RequestBody AccountDeleteRequestDTO accountDeleteRequestDTO) {
+    public ResponseEntity<Void> delete(
+            @Valid
+            @RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+            description = "사용자 계정 비밀번호: accountLoginPw")
+            AccountDeleteRequestDTO accountDeleteRequestDTO) {
         accountService.delete(accountDeleteRequestDTO);
         URI redirectUri = URI.create("/account/logout");
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
@@ -69,22 +83,30 @@ public class AccountController {
     @PatchMapping("/update/accountName")
     @Operation(summary = "사용자 계정의 이름 변경",
     description = """
-            요청 = 사용자 계정 이름: accountName, 사용자 계정 비밀번호: accountLoginPw \n
             비밀번호 검증을 통해 사용자가 요청한 것인지 확인 후 사용자 계정의 이름 변경 \n
             응답 = 사용자 계정 이름: accountName
             """)
-    public ResponseEntity<AccountUpdatedNameResponseDTO> updateAccountName(@Valid @RequestBody AccountUpdateNameRequestDTO accountUpdateNameRequestDTO) {
+    public ResponseEntity<AccountUpdatedNameResponseDTO> updateAccountName(
+            @Valid
+            @RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+            description = "사용자 계정 이름: accountName, 사용자 계정 비밀번호: accountLoginPw")
+            AccountUpdateNameRequestDTO accountUpdateNameRequestDTO) {
         return accountService.updateName(accountUpdateNameRequestDTO);
     }
 
     @PatchMapping("/update/accountLoginPw")
     @Operation(summary = "사용자의 비밀번호 변경",
     description = """
-            요청 = 현재 비밀번호: currentPw, 변경할 비밀번호: newPw \n
             비밀번호 검증을 통해 사용자가 요청한 것인지 확인 후 사용자 계정의 비밀번호 변경 \n
             비밀번호 변경 이후 리디렉션을 통해 로그아웃하여 세션 정보 제거 (재로그인 필요)
             """)
-    public ResponseEntity<Void> updateAccountLoginPw(@Valid @RequestBody AccountUpdateLoginPasswordRequestDTO accountUpdateLoginPasswordRequestDTO) {
+    public ResponseEntity<Void> updateAccountLoginPw(
+            @Valid
+            @RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+            description = "현재 비밀번호: currentPw, 변경할 비밀번호: newPw")
+            AccountUpdateLoginPasswordRequestDTO accountUpdateLoginPasswordRequestDTO) {
         accountService.updatePassword(accountUpdateLoginPasswordRequestDTO);
         URI redirectUri = URI.create("/account/logout");
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
