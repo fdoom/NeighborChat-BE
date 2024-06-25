@@ -1,0 +1,10 @@
+version: '3'
+services:
+  server:
+    image: ojkim/nearbysns:1.0.0
+    container_name: nearbysns
+    ports:
+      - "80:80"
+    environment:
+      db_password: ${DB_PASSWORD}
+      db_username: ${DB_USERNAME}
