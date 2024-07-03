@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://localhost:3000", "http://frontend.porito.click:80")
                 .allowedHeaders("*")
                 .allowedMethods("OPTIONS", "GET", "POST", "PATCH", "DELETE", "PUT")
                 .allowCredentials(true)
