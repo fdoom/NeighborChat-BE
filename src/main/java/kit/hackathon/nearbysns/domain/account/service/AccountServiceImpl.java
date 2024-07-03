@@ -2,6 +2,7 @@ package kit.hackathon.nearbysns.domain.account.service;
 
 import jakarta.servlet.http.HttpSession;
 import kit.hackathon.nearbysns.domain.account.dto.request.*;
+import kit.hackathon.nearbysns.domain.account.dto.response.AccountLoginResponseDTO;
 import kit.hackathon.nearbysns.domain.account.dto.response.AccountUpdatedNameResponseDTO;
 import kit.hackathon.nearbysns.domain.account.entity.Account;
 import kit.hackathon.nearbysns.domain.account.repository.AccountRepository;
@@ -46,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void authenticate(AccountLoginRequestDTO accountLoginRequestDTO) {
+    public ResponseEntity<AccountLoginResponseDTO> authenticate(AccountLoginRequestDTO accountLoginRequestDTO) {
         Account account = accountRepository.findByAccountLoginId(accountLoginRequestDTO.getAccountLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         basicAccountCheck(account, accountLoginRequestDTO.getAccountLoginPw());
@@ -58,6 +59,7 @@ public class AccountServiceImpl implements AccountService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         httpSession.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        return ResponseEntity.ok(modelMapper.map(account, AccountLoginResponseDTO.class));
     }
 
     @Override
@@ -88,6 +90,13 @@ public class AccountServiceImpl implements AccountService {
 
         account.updatePassword(passwordEncoder.encode(accountUpdateLoginPasswordRequestDTO.getNewPw()));
         accountRepository.save(account);
+    }
+
+    @Override
+    public ResponseEntity<AccountLoginResponseDTO> whoAmI() {
+        Account account = accountRepository.findById(securityUtil.getAccountId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return ResponseEntity.ok(modelMapper.map(account, AccountLoginResponseDTO.class));
     }
 
     private void basicAccountCheck(Account account, String inputPassword) {

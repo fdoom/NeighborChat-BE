@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kit.hackathon.nearbysns.domain.account.dto.request.*;
+import kit.hackathon.nearbysns.domain.account.dto.response.AccountLoginResponseDTO;
 import kit.hackathon.nearbysns.domain.account.dto.response.AccountUpdatedNameResponseDTO;
 import kit.hackathon.nearbysns.domain.account.service.AccountService;
 import kit.hackathon.nearbysns.global.base.exception.ErrorCode;
@@ -53,14 +54,14 @@ public class AccountController {
     @PostMapping("/login")
     @Operation(summary = "사용자 계정 로그인",
     description = "사용자 계정의 로그인 아이디와 비밀번호 입력하여 세션 정보 받기")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<AccountLoginResponseDTO> login(
             @Valid
             @RequestBody
             @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
             description = "요청 = 사용자 계정 아이디: accountLoginId, 사용자 계정 비밀번호: accountLoginPw")
             AccountLoginRequestDTO accountLoginRequestDTO) {
-        accountService.authenticate(accountLoginRequestDTO);
-        return ResponseEntity.ok().build();
+
+        return accountService.authenticate(accountLoginRequestDTO);
     }
 
     @DeleteMapping("/delete")
@@ -110,5 +111,10 @@ public class AccountController {
         accountService.updatePassword(accountUpdateLoginPasswordRequestDTO);
         URI redirectUri = URI.create("/account/logout");
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+    }
+
+    @GetMapping("/whoAmI")
+    public ResponseEntity<AccountLoginResponseDTO> whoAmI() {
+        return accountService.whoAmI();
     }
 }
